@@ -109,7 +109,7 @@ def filter_views(spreadsheet_id):
         body = {'requests': [updatefilterviewrequest]}
         updatefilterviewresponse = service.spreadsheets() \
             .batchUpdate(spreadsheetId=spreadsheet_id, body=body).execute()
-        print(str(updatefilterviewresponse))
+        print(updatefilterviewresponse)
     except HttpError as error:
         print(f"An error occurred: {error}")
 

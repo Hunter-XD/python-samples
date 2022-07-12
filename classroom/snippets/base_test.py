@@ -48,14 +48,14 @@ class BaseTest(unittest.TestCase):
 
     def setUp(self):
         self.courses_to_delete = []
-        print("Meow" + str(self.courses_to_delete))
+        print(f"Meow{self.courses_to_delete}")
 
     def tearDown(self):
         for course_id in self.courses_to_delete:
             try:
                 self.service.courses().delete(id=course_id).execute()
             except errors.HttpError:
-                print('Unable to delete file %s' % course_id)
+                print(f'Unable to delete file {course_id}')
 
     def delete_course_on_cleanup(self, course_id):
         self.courses_to_delete.append(course_id)

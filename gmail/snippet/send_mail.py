@@ -34,7 +34,7 @@ def create_draft(service, user_id, message_body):
 
         return draft
     except errors.HttpError as error:
-        print('An error occurred: %s' % error)
+        print(f'An error occurred: {error}')
         return None
 
 
@@ -57,10 +57,10 @@ def send_message(service, user_id, message):
     try:
         message = (service.users().messages().send(userId=user_id, body=message)
                    .execute())
-        print('Message Id: %s' % message['id'])
+        print(f"Message Id: {message['id']}")
         return message
     except errors.HttpError as error:
-        print('An error occurred: %s' % error)
+        print(f'An error occurred: {error}')
 
 
 # [END send_email]
@@ -123,20 +123,17 @@ def create_message_with_attachment(
     if main_type == 'text':
         fp = open(file, 'rb')
         msg = MIMEText(fp.read(), _subtype=sub_type)
-        fp.close()
     elif main_type == 'image':
         fp = open(file, 'rb')
         msg = MIMEImage(fp.read(), _subtype=sub_type)
-        fp.close()
     elif main_type == 'audio':
         fp = open(file, 'rb')
         msg = MIMEAudio(fp.read(), _subtype=sub_type)
-        fp.close()
     else:
         fp = open(file, 'rb')
         msg = MIMEBase(main_type, sub_type)
         msg.set_payload(fp.read())
-        fp.close()
+    fp.close()
     filename = os.path.basename(file)
     msg.add_header('Content-Disposition', 'attachment', filename=filename)
     message.attach(msg)

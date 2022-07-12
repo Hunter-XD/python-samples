@@ -61,8 +61,7 @@ def main():
         connections = results.get('connections', [])
 
         for person in connections:
-            names = person.get('names', [])
-            if names:
+            if names := person.get('names', []):
                 name = names[0].get('displayName')
                 print(name)
     except HttpError as err:

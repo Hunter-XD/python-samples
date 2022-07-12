@@ -60,10 +60,9 @@ def main():
             presentationId=PRESENTATION_ID).execute()
         slides = presentation.get('slides')
 
-        print('The presentation contains {} slides:'.format(len(slides)))
+        print(f'The presentation contains {len(slides)} slides:')
         for i, slide in enumerate(slides):
-            print('- Slide #{} contains {} elements.'.format(
-                i + 1, len(slide.get('pageElements'))))
+            print(f"- Slide #{i + 1} contains {len(slide.get('pageElements'))} elements.")
     except HttpError as err:
         print(err)
 

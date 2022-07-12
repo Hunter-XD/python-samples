@@ -54,7 +54,7 @@ class BaseTest(unittest.TestCase):
             try:
                 self.drive_service.files().delete(fileId=file_id).execute()
             except errors.HttpError:
-                print('Unable to delete file %s' % file_id, file=sys.stderr)
+                print(f'Unable to delete file {file_id}', file=sys.stderr)
 
     def delete_file_on_cleanup(self, file_id):
         self.files_to_delete.append(file_id)

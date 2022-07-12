@@ -58,7 +58,7 @@ def main():
         # Retrieve the documents contents from the Docs service.
         document = service.documents().get(documentId=DOCUMENT_ID).execute()
 
-        print('The title of the document is: {}'.format(document.get('title')))
+        print(f"The title of the document is: {document.get('title')}")
     except HttpError as err:
         print(err)
 

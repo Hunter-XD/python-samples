@@ -10,14 +10,12 @@ class SettingsSnippets:
 
     def update_signature(self):
         gmail_service = self.service
-        # [START updateSignature]
-        primary_alias = None
         aliases = gmail_service.users().settings().sendAs(). \
             list(userId='me').execute()
-        for alias in aliases.get('sendAs'):
-            if alias.get('isPrimary'):
-                primary_alias = alias
-                break
+        primary_alias = next(
+            (alias for alias in aliases.get('sendAs') if alias.get('isPrimary')),
+            None,
+        )
 
         sendAsConfiguration = {
             'signature': 'I heart cats'
@@ -26,7 +24,7 @@ class SettingsSnippets:
             patch(userId='me',
                   sendAsEmail=primary_alias.get('sendAsEmail'),
                   body=sendAsConfiguration).execute()
-        print('Updated signature for: %s' % result.get('displayName'))
+        print(f"Updated signature for: {result.get('displayName')}")
         # [END updateSignature]
         return result.get('signature')
 
@@ -48,7 +46,7 @@ class SettingsSnippets:
         }
         result = gmail_service.users().settings().filters(). \
             create(userId='me', body=filter).execute()
-        print('Created filter: %s' % result.get('id'))
+        print(f"Created filter: {result.get('id')}")
         # [END createFilter]
         return result.get('id')
 
@@ -95,7 +93,10 @@ class SettingsSnippets:
             'startTime': long(start_time),
             'endTime': long(end_time)
         }
-        response = gmail_service.users().settings(). \
-            updateVacation(userId='me', body=vacation_settings).execute()
         # [END enableAutoReply]
-        return response
+        return (
+            gmail_service.users()
+            .settings()
+            .updateVacation(userId='me', body=vacation_settings)
+            .execute()
+        )

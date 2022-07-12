@@ -54,11 +54,7 @@ def main():
     # Call the Drive Activity API
     results = service.activities().list(source='drive.google.com',
                                         drive_ancestorId='root', pageSize=10).execute()
-    activities = results.get('activities', [])
-
-    if not activities:
-        print('No activity.')
-    else:
+    if activities := results.get('activities', []):
         print('Recent activity:')
         for activity in activities:
             event = activity['combinedEvent']
@@ -70,6 +66,9 @@ def main():
                 int(event['eventTimeMillis']) / 1000)
             print(u'{0}: {1}, {2}, {3} ({4})'.format(time, user['name'],
                                                      event['primaryEventType'], target['name'], target['mimeType']))
+
+    else:
+        print('No activity.')
 
 
 if __name__ == '__main__':

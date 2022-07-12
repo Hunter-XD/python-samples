@@ -38,7 +38,7 @@ class ClassroomSnippets(object):
             'courseState': 'PROVISIONED'
         }
         course = service.courses().create(body=course).execute()
-        print('Course created: %s %s' % (course.get('name'), course.get('id')))
+        print(f"Course created: {course.get('name')} {course.get('id')}")
         # [END classroom_create_course]
         return course
 
@@ -86,7 +86,7 @@ class ClassroomSnippets(object):
         course['section'] = 'Period 3'
         course['room'] = '302'
         course = service.courses().update(id=course_id, body=course).execute()
-        print('Course %s updated.' % course.get('name'))
+        print(f"Course {course.get('name')} updated.")
         # [END classroom_update_course]
 
     def patch_course(self, course_id):
@@ -151,9 +151,10 @@ class ClassroomSnippets(object):
             teachers = service.courses().teachers()
             teacher = teachers.create(courseId=course_id,
                                       body=teacher).execute()
-            print('User %s was added as a teacher to the course with ID %s'
-                  % (teacher.get('profile').get('name').get('fullName'),
-                     course_id))
+            print(
+                f"User {teacher.get('profile').get('name').get('fullName')} was added as a teacher to the course with ID {course_id}"
+            )
+
         except errors.HttpError as error:
             print('User "{%s}" is already a member of this course.'
                   % teacher_email)
@@ -229,9 +230,9 @@ class ClassroomSnippets(object):
         else:
             print('Student Submissions:')
             for submission in submissions:
-                print("%s was submitted at %s" %
-                      (submission.get('id'),
-                       submission.get('creationTime')))
+                print(
+                    f"{submission.get('id')} was submitted at {submission.get('creationTime')}"
+                )
         # [END classroom_list_submissions]
 
     def list_student_submissions(self, course_id, coursework_id, user_id):
@@ -258,9 +259,9 @@ class ClassroomSnippets(object):
         else:
             print('Student Submissions:')
             for submission in submissions:
-                print("%s was submitted at %s" %
-                      (submission.get('id'),
-                       submission.get('creationTime')))
+                print(
+                    f"{submission.get('id')} was submitted at {submission.get('creationTime')}"
+                )
         # [END classroom_list_student_submissions]
 
     def list_all_submissions(self, course_id, user_id):
@@ -287,9 +288,9 @@ class ClassroomSnippets(object):
         else:
             print('Complete list of student Submissions:')
             for submission in submissions:
-                print("%s was submitted at %s" %
-                      (submission.get('id'),
-                       submission.get('creationTime')))
+                print(
+                    f"{submission.get('id')} was submitted at {submission.get('creationTime')}"
+                )
         # [END classroom_list_submissions]
 
     def add_attachment(self, course_id, coursework_id, submission_id):

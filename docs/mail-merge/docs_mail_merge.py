@@ -91,7 +91,7 @@ def _get_sheets_data(service=SHEETS):
 
 
 # data source dispatch table [better alternative vs. eval()]
-SAFE_DISPATCH = {k: globals().get('_get_%s_data' % k) for k in SOURCES}
+SAFE_DISPATCH = {k: globals().get(f'_get_{k}_data') for k in SOURCES}
 
 
 def _copy_template(tmpl_id, source, service):
@@ -99,7 +99,7 @@ def _copy_template(tmpl_id, source, service):
         returns file ID of (new) copy.
     """
     try:
-        body = {'name': 'Merged form letter (%s)' % source}
+        body = {'name': f'Merged form letter ({source})'}
         return service.files().copy(body=body, fileId=tmpl_id,
                                     fields='id').execute().get('id')
     except HttpError as error:
@@ -161,7 +161,7 @@ if __name__ == '__main__':
     # get row data, then loop through & process each form letter
     data = get_data(SOURCE)  # get data from data source
     for i, row in enumerate(data):
-        merge.update(dict(zip(COLUMNS, row)))
+        merge |= dict(zip(COLUMNS, row))
         print('Merged letter %d: docs.google.com/document/d/%s/edit' % (
             i + 1, merge_template(DOCS_FILE_ID, SOURCE, DRIVE)))
 # [END mail_merge_python]

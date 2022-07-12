@@ -63,7 +63,7 @@ def main():
 
         print('Matters:')
         for matter in matters:
-            print(u'{} ({})'.format(matter.get('name'), matter.get('id')))
+            print(f"{matter.get('name')} ({matter.get('id')})")
     except HttpError as err:
         print(err)
 

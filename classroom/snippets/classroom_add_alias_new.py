@@ -69,7 +69,7 @@ def classroom_add_alias_new():
         print('====================================')
 
     except HttpError as error:
-        print('An error occurred: %s' % error)
+        print(f'An error occurred: {error}')
     return course
 
 

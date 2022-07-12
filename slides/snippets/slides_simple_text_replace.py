@@ -34,22 +34,21 @@ def simple_text_replace(presentation_id, shape_id, replacement_text):
     try:
         slides_service = build('slides', 'v1', credentials=creds)
         # Remove existing text in the shape, then insert new text.
-        requests = []
-        requests.append({
-            'deleteText': {
-                'objectId': shape_id,
-                'textRange': {
-                    'type': 'ALL'
+        requests = [
+            {
+                'deleteText': {
+                    'objectId': shape_id,
+                    'textRange': {'type': 'ALL'},
                 }
-            }
-        })
-        requests.append({
-            'insertText': {
-                'objectId': shape_id,
-                'insertionIndex': 0,
-                'text': replacement_text
-            }
-        })
+            },
+            {
+                'insertText': {
+                    'objectId': shape_id,
+                    'insertionIndex': 0,
+                    'text': replacement_text,
+                }
+            },
+        ]
 
         # Execute the requests.
         body = {

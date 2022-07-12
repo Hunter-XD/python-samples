@@ -57,7 +57,7 @@ class BaseTest(unittest.TestCase):
             try:
                 self.drive_service.files().delete(fileId=file_id).execute()
             except errors.HttpError:
-                print('Unable to delete file %s' % file_id, file=sys.stderr)
+                print(f'Unable to delete file {file_id}', file=sys.stderr)
 
     def delete_file_on_cleanup(self, file_id):
         self.files_to_delete.append(file_id)
@@ -98,34 +98,32 @@ class BaseTest(unittest.TestCase):
             'magnitude': 350,
             'unit': 'PT'
         }
-        requests = []
-        requests.append({
-            'createShape': {
-                'objectId': box_id,
-                'shapeType': 'TEXT_BOX',
-                'elementProperties': {
-                    'pageObjectId': page_id,
-                    'size': {
-                        'height': pt350,
-                        'width': pt350
+        requests = [
+            {
+                'createShape': {
+                    'objectId': box_id,
+                    'shapeType': 'TEXT_BOX',
+                    'elementProperties': {
+                        'pageObjectId': page_id,
+                        'size': {'height': pt350, 'width': pt350},
+                        'transform': {
+                            'scaleX': 1,
+                            'scaleY': 1,
+                            'translateX': 350,
+                            'translateY': 100,
+                            'unit': 'PT',
+                        },
                     },
-                    'transform': {
-                        'scaleX': 1,
-                        'scaleY': 1,
-                        'translateX': 350,
-                        'translateY': 100,
-                        'unit': 'PT'
-                    }
                 }
-            }
-        })
-        requests.append({
-            'insertText': {
-                'objectId': box_id,
-                'insertionIndex': 0,
-                'text': 'New Box Text Inserted'
-            }
-        })
+            },
+            {
+                'insertText': {
+                    'objectId': box_id,
+                    'insertionIndex': 0,
+                    'text': 'New Box Text Inserted',
+                }
+            },
+        ]
 
         body = {
             'requests': requests
@@ -141,29 +139,27 @@ class BaseTest(unittest.TestCase):
             'magnitude': 4000000,
             'unit': 'EMU'
         }
-        requests = []
-        requests.append({
-            'createSheetsChart': {
-                'objectId': chart_id,
-                'spreadsheetId': spreadsheet_id,
-                'chartId': sheet_chart_id,
-                'linkingMode': 'LINKED',
-                'elementProperties': {
-                    'pageObjectId': page_id,
-                    'size': {
-                        'height': emu4M,
-                        'width': emu4M
+        requests = [
+            {
+                'createSheetsChart': {
+                    'objectId': chart_id,
+                    'spreadsheetId': spreadsheet_id,
+                    'chartId': sheet_chart_id,
+                    'linkingMode': 'LINKED',
+                    'elementProperties': {
+                        'pageObjectId': page_id,
+                        'size': {'height': emu4M, 'width': emu4M},
+                        'transform': {
+                            'scaleX': 1,
+                            'scaleY': 1,
+                            'translateX': 100000,
+                            'translateY': 100000,
+                            'unit': 'EMU',
+                        },
                     },
-                    'transform': {
-                        'scaleX': 1,
-                        'scaleY': 1,
-                        'translateX': 100000,
-                        'translateY': 100000,
-                        'unit': 'EMU'
-                    }
                 }
             }
-        })
+        ]
 
         body = {
             'requests': requests

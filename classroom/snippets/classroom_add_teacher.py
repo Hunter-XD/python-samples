@@ -38,9 +38,10 @@ def classroom_add_teacher(course_id):
         teachers = service.courses().teachers()
         teacher = teachers.create(courseId=course_id,
                                   body=teacher).execute()
-        print('User %s was added as a teacher to the course with ID %s'
-              % (teacher.get('profile').get('name').get('fullName'),
-                 course_id))
+        print(
+            f"User {teacher.get('profile').get('name').get('fullName')} was added as a teacher to the course with ID {course_id}"
+        )
+
     except HttpError as error:
         print('User "{%s}" is already a member of this course.'
               % teacher_email)

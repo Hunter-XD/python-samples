@@ -13,11 +13,13 @@ def show_chatty_threads(service, user_id='me'):
 
         if nmsgs > 2:    # skip if <3 msgs in thread
             msg = tdata['messages'][0]['payload']
-            subject = ''
-            for header in msg['headers']:
-                if header['name'] == 'Subject':
-                    subject = header['value']
-                    break
-            if subject:  # skip if no Subject line
+            if subject := next(
+                (
+                    header['value']
+                    for header in msg['headers']
+                    if header['name'] == 'Subject'
+                ),
+                '',
+            ):
                 print('- %s (%d msgs)' % (subject, nmsgs))
 # [END show_chatty_threads]

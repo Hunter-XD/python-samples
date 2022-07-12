@@ -65,14 +65,16 @@ class SmimeSnippetsTest(unittest.TestCase):
         """
         self.assertEqual(len(is_default), len(expiration))
         self.assertLessEqual(is_default.count(True), 1)
-        smime_info = []
         id_base = 'existing_certificate_id_%d'
-        for i in range(len(is_default)):
-            smime_info.append(
-                self.make_fake_insert_result(
-                    id=(id_base % i),
-                    is_default=is_default[i],
-                    expiration=expiration[i]))
+        smime_info = [
+            self.make_fake_insert_result(
+                id=(id_base % i),
+                is_default=is_default[i],
+                expiration=expiration[i],
+            )
+            for i in range(len(is_default))
+        ]
+
         return {'smimeInfo': smime_info}
 
     @staticmethod
@@ -93,8 +95,7 @@ class SmimeSnippetsTest(unittest.TestCase):
         smime_info = smime_snippets.create_smime_info('files/cert.p12', 'password')
 
         self.assertIsNotNone(smime_info)
-        self.assertSetEqual(
-            set(smime_info.keys()), set(['pkcs12', 'encryptedKeyPassword']))
+        self.assertSetEqual(set(smime_info.keys()), {'pkcs12', 'encryptedKeyPassword'})
         self.assertGreater(len(smime_info['pkcs12']), 0)
         self.assertEqual(smime_info['encryptedKeyPassword'], 'password')
 

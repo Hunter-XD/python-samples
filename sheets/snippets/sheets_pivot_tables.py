@@ -47,62 +47,64 @@ def pivot_tables(spreadsheet_id):
             .get('addSheet').get('properties').get('sheetId')
         target_sheet_id = batch_update_response.get('replies')[1] \
             .get('addSheet').get('properties').get('sheetId')
-        requests = []
-        requests.append({
-            'updateCells': {
-                'rows': {
-                    'values': [
-                        {
-                            'pivotTable': {
-                                'source': {
-                                    'sheetId': source_sheet_id,
-                                    'startRowIndex': 0,
-                                    'startColumnIndex': 0,
-                                    'endRowIndex': 20,
-                                    'endColumnIndex': 7
-                                },
-                                'rows': [
-                                    {
-                                        'sourceColumnOffset': 1,
-                                        'showTotals': True,
-                                        'sortOrder': 'ASCENDING',
-
+        requests = [
+            {
+                'updateCells': {
+                    'rows': {
+                        'values': [
+                            {
+                                'pivotTable': {
+                                    'source': {
+                                        'sheetId': source_sheet_id,
+                                        'startRowIndex': 0,
+                                        'startColumnIndex': 0,
+                                        'endRowIndex': 20,
+                                        'endColumnIndex': 7,
                                     },
-
-                                ],
-                                'columns': [
-                                    {
-                                        'sourceColumnOffset': 4,
-                                        'sortOrder': 'ASCENDING',
-                                        'showTotals': True,
-
-                                    }
-                                ],
-                                'values': [
-                                    {
-                                        'summarizeFunction': 'COUNTA',
-                                        'sourceColumnOffset': 4
-                                    }
-                                ],
-                                'valueLayout': 'HORIZONTAL'
+                                    'rows': [
+                                        {
+                                            'sourceColumnOffset': 1,
+                                            'showTotals': True,
+                                            'sortOrder': 'ASCENDING',
+                                        },
+                                    ],
+                                    'columns': [
+                                        {
+                                            'sourceColumnOffset': 4,
+                                            'sortOrder': 'ASCENDING',
+                                            'showTotals': True,
+                                        }
+                                    ],
+                                    'values': [
+                                        {
+                                            'summarizeFunction': 'COUNTA',
+                                            'sourceColumnOffset': 4,
+                                        }
+                                    ],
+                                    'valueLayout': 'HORIZONTAL',
+                                }
                             }
-                        }
-                    ]
-                },
-                'start': {
-                    'sheetId': target_sheet_id,
-                    'rowIndex': 0,
-                    'columnIndex': 0
-                },
-                'fields': 'pivotTable'
+                        ]
+                    },
+                    'start': {
+                        'sheetId': target_sheet_id,
+                        'rowIndex': 0,
+                        'columnIndex': 0,
+                    },
+                    'fields': 'pivotTable',
+                }
             }
-        })
+        ]
+
         body = {
             'requests': requests
         }
-        response = service.spreadsheets() \
-            .batchUpdate(spreadsheetId=spreadsheet_id, body=body).execute()
-        return response
+        return (
+            service.spreadsheets()
+            .batchUpdate(spreadsheetId=spreadsheet_id, body=body)
+            .execute()
+        )
+
 
     except HttpError as error:
         print(f"An error occurred: {error}")

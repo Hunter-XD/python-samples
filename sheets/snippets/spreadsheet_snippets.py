@@ -36,24 +36,22 @@ class SpreadsheetSnippets(object):
     def batch_update(self, spreadsheet_id, title, find, replacement):
         service = self.service
         # [START sheets_batch_update]
-        requests = []
-        # Change the spreadsheet's title.
-        requests.append({
-            'updateSpreadsheetProperties': {
-                'properties': {
-                    'title': title
-                },
-                'fields': 'title'
-            }
-        })
-        # Find and replace text
-        requests.append({
-            'findReplace': {
-                'find': find,
-                'replacement': replacement,
-                'allSheets': True
-            }
-        })
+        requests = [
+            {
+                'updateSpreadsheetProperties': {
+                    'properties': {'title': title},
+                    'fields': 'title',
+                }
+            },
+            {
+                'findReplace': {
+                    'find': find,
+                    'replacement': replacement,
+                    'allSheets': True,
+                }
+            },
+        ]
+
         # Add additional requests (operations) ...
 
         body = {
@@ -188,64 +186,64 @@ class SpreadsheetSnippets(object):
             .get('addSheet').get('properties').get('sheetId')
         target_sheet_id = batch_update_response.get('replies')[1] \
             .get('addSheet').get('properties').get('sheetId')
-        requests = []
-        # [START sheets_pivot_tables]
-        requests.append({
-            'updateCells': {
-                'rows': {
-                    'values': [
-                        {
-                            'pivotTable': {
-                                'source': {
-                                    'sheetId': source_sheet_id,
-                                    'startRowIndex': 0,
-                                    'startColumnIndex': 0,
-                                    'endRowIndex': 20,
-                                    'endColumnIndex': 7
-                                },
-                                'rows': [
-                                    {
-                                        'sourceColumnOffset': 1,
-                                        'showTotals': True,
-                                        'sortOrder': 'ASCENDING',
-
+        requests = [
+            {
+                'updateCells': {
+                    'rows': {
+                        'values': [
+                            {
+                                'pivotTable': {
+                                    'source': {
+                                        'sheetId': source_sheet_id,
+                                        'startRowIndex': 0,
+                                        'startColumnIndex': 0,
+                                        'endRowIndex': 20,
+                                        'endColumnIndex': 7,
                                     },
-
-                                ],
-                                'columns': [
-                                    {
-                                        'sourceColumnOffset': 4,
-                                        'sortOrder': 'ASCENDING',
-                                        'showTotals': True,
-
-                                    }
-                                ],
-                                'values': [
-                                    {
-                                        'summarizeFunction': 'COUNTA',
-                                        'sourceColumnOffset': 4
-                                    }
-                                ],
-                                'valueLayout': 'HORIZONTAL'
+                                    'rows': [
+                                        {
+                                            'sourceColumnOffset': 1,
+                                            'showTotals': True,
+                                            'sortOrder': 'ASCENDING',
+                                        },
+                                    ],
+                                    'columns': [
+                                        {
+                                            'sourceColumnOffset': 4,
+                                            'sortOrder': 'ASCENDING',
+                                            'showTotals': True,
+                                        }
+                                    ],
+                                    'values': [
+                                        {
+                                            'summarizeFunction': 'COUNTA',
+                                            'sourceColumnOffset': 4,
+                                        }
+                                    ],
+                                    'valueLayout': 'HORIZONTAL',
+                                }
                             }
-                        }
-                    ]
-                },
-                'start': {
-                    'sheetId': target_sheet_id,
-                    'rowIndex': 0,
-                    'columnIndex': 0
-                },
-                'fields': 'pivotTable'
+                        ]
+                    },
+                    'start': {
+                        'sheetId': target_sheet_id,
+                        'rowIndex': 0,
+                        'columnIndex': 0,
+                    },
+                    'fields': 'pivotTable',
+                }
             }
-        })
+        ]
+
         body = {
             'requests': requests
         }
-        response = service.spreadsheets() \
-            .batchUpdate(spreadsheetId=spreadsheet_id, body=body).execute()
         # [END sheets_pivot_tables]
-        return response
+        return (
+            service.spreadsheets()
+            .batchUpdate(spreadsheetId=spreadsheet_id, body=body)
+            .execute()
+        )
 
     def conditional_formatting(self, spreadsheet_id):
         service = self.service
@@ -390,5 +388,5 @@ class SpreadsheetSnippets(object):
         body = {'requests': [updateFilterViewRequest]}
         updateFilterViewResponse = service.spreadsheets() \
             .batchUpdate(spreadsheetId=spreadsheet_id, body=body).execute()
-        print(str(updateFilterViewResponse))
+        print(updateFilterViewResponse)
         # [END sheets_filter_views]
