@@ -54,15 +54,14 @@ def main():
     print('Getting the last 10 login events')
     results = service.activities().list(userKey='all', applicationName='login',
                                         maxResults=10).execute()
-    activities = results.get('items', [])
-
-    if not activities:
-        print('No logins found.')
-    else:
+    if activities := results.get('items', []):
         print('Logins:')
         for activity in activities:
             print(u'{0}: {1} ({2})'.format(activity['id']['time'],
                                            activity['actor']['email'], activity['events'][0]['name']))
+
+    else:
+        print('No logins found.')
 
 
 if __name__ == '__main__':

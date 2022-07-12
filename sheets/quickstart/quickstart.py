@@ -69,7 +69,7 @@ def main():
         print('Name, Major:')
         for row in values:
             # Print columns A and E, which correspond to indices 0 and 4.
-            print('%s, %s' % (row[0], row[4]))
+            print(f'{row[0]}, {row[4]}')
     except HttpError as err:
         print(err)
 

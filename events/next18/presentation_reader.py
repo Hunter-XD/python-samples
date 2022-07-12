@@ -54,7 +54,7 @@ class PresentationReader(object):
                 if shape:
                     placeholders += self._GetPlaceholdersFromText(
                         shape.get('text'))
-                elif table:
+                else:
                     rows = table.get('tableRows')
                     for row in rows:
                         cells = row.get('tableCells')

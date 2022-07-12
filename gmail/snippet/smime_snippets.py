@@ -22,13 +22,12 @@ def create_smime_info(cert_filename, cert_password=None):
     smime_info = None
     try:
         with open(cert_filename, 'r') as f:
-            smime_info = {}
             data = f.read().encode('UTF-8')
-            smime_info['pkcs12'] = base64.urlsafe_b64encode(data)
+            smime_info = {'pkcs12': base64.urlsafe_b64encode(data)}
             if cert_password and len(cert_password) > 0:
                 smime_info['encryptedKeyPassword'] = cert_password
     except (OSError, IOError) as error:
-        print('An error occurred while reading the certificate file: %s' % error)
+        print(f'An error occurred while reading the certificate file: {error}')
 
     return smime_info
 
@@ -52,10 +51,10 @@ def insert_smime_info(service, user_id, smime_info, send_as_email=None):
     try:
         results = service.users().settings().sendAs().smimeInfo().insert(
             userId=user_id, sendAsEmail=send_as_email, body=smime_info).execute()
-        print('Inserted certificate; id: %s' % results['id'])
+        print(f"Inserted certificate; id: {results['id']}")
         return results
     except errors.HttpError as error:
-        print('An error occurred: %s' % error)
+        print(f'An error occurred: {error}')
         return None
 
 
@@ -82,13 +81,14 @@ def insert_cert_from_csv(service_builder, csv_filename):
                 user_id = row[0]
                 cert_filename = row[1]
                 cert_password = row[2]
-                smime_info = create_smime_info(cert_filename, cert_password)
-                if smime_info:
+                if smime_info := create_smime_info(
+                    cert_filename, cert_password
+                ):
                     insert_smime_info(service_builder(user_id), user_id, smime_info)
                 else:
-                    print('Unable to read certificate file for user_id: %s' % user_id)
+                    print(f'Unable to read certificate file for user_id: {user_id}')
     except (OSError, IOError) as error:
-        print('An error occured while reading the CSV file: %s' % error)
+        print(f'An error occured while reading the CSV file: {error}')
 
 
 # [END insert_cert_from_csv]
@@ -130,7 +130,7 @@ def update_smime_certs(service,
         results = service.users().settings().sendAs().smimeInfo().list(
             userId=user_id, sendAsEmail=send_as_email).execute()
     except errors.HttpError as error:
-        print('An error occurred during list: %s' % error)
+        print(f'An error occurred during list: {error}')
         return None
 
     default_cert_id = None
@@ -148,28 +148,25 @@ def update_smime_certs(service,
             if exp > expire_dt:
                 if exp > best_cert_id[1]:
                     best_cert_id = (cert_id, exp)
-            else:
-                if is_default_cert:
-                    default_cert_id = None
+            elif is_default_cert:
+                default_cert_id = None
 
-    if not default_cert_id:
-        default_id = best_cert_id[0]
-        if not default_id and cert_filename:
-            smime_info = create_smime_info(cert_filename, cert_password)
-            results = insert_smime_info(service, user_id, smime_info)
-            if results:
-                default_id = results['id']
-
-        if default_id:
-            try:
-                service.users().settings().sendAs().smimeInfo().setDefault(
-                    userId=user_id, sendAsEmail=send_as_email, id=default_id).execute()
-                return default_id
-            except errors.HttpError as error:
-                print('An error occurred during setDefault: %s' % error)
-    else:
+    if default_cert_id:
         return default_cert_id
 
+    default_id = best_cert_id[0]
+    if not default_id and cert_filename:
+        smime_info = create_smime_info(cert_filename, cert_password)
+        if results := insert_smime_info(service, user_id, smime_info):
+            default_id = results['id']
+
+    if default_id:
+        try:
+            service.users().settings().sendAs().smimeInfo().setDefault(
+                userId=user_id, sendAsEmail=send_as_email, id=default_id).execute()
+            return default_id
+        except errors.HttpError as error:
+            print(f'An error occurred during setDefault: {error}')
     return None
 
 
@@ -199,5 +196,5 @@ def update_smime_from_csv(service_builder, csv_filename, expire_dt=None):
                     cert_password=row[2],
                     expire_dt=expire_dt)
     except (OSError, IOError) as error:
-        print('An error occured while reading the CSV file: %s' % error)
+        print(f'An error occured while reading the CSV file: {error}')
 # [END update_smime_certs]

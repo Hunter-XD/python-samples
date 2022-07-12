@@ -53,14 +53,14 @@ def main():
     # Call the Admin SDK Reseller API
     print('Getting the first 10 subscriptions')
     results = service.subscriptions().list(maxResults=10).execute()
-    subscriptions = results.get('subscriptions', [])
-    if not subscriptions:
-        print('No subscriptions found.')
-    else:
+    if subscriptions := results.get('subscriptions', []):
         print('Subscriptions:')
         for subscription in subscriptions:
             print(u'{0} ({1}, {2})'.format(subscription['customerId'],
                                            subscription['skuId'], subscription['plan']['planName']))
+
+    else:
+        print('No subscriptions found.')
 
 
 if __name__ == '__main__':

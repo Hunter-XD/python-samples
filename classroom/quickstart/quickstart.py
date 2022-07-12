@@ -65,7 +65,7 @@ def main():
             print(course['name'])
 
     except HttpError as error:
-        print('An error occurred: %s' % error)
+        print(f'An error occurred: {error}')
 
 
 if __name__ == '__main__':

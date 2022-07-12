@@ -52,7 +52,7 @@ def text_merging(template_presentation_id, data_spreadsheet_id):
             total_portfolio = row[11]  # total portfolio in column 12
 
             # Duplicate the template presentation using the Drive API.
-            copy_title = customer_name + ' presentation'
+            copy_title = f'{customer_name} presentation'
             body = {
                 'name': copy_title
             }
@@ -102,11 +102,12 @@ def text_merging(template_presentation_id, data_spreadsheet_id):
             responses.append(response)
             # [END_EXCLUDE]
             # Count the total number of replacements made.
-            num_replacements = 0
-            for reply in response.get('replies'):
-                if reply.get('occurrencesChanged') is not None:
-                    num_replacements += reply.get('replaceAllText') \
-                        .get('occurrencesChanged')
+            num_replacements = sum(
+                reply.get('replaceAllText').get('occurrencesChanged')
+                for reply in response.get('replies')
+                if reply.get('occurrencesChanged') is not None
+            )
+
             print(f"Created presentation for "
                   f"{customer_name} with ID: {presentation_copy_id}")
             print(f"Replaced {num_replacements} text instances")

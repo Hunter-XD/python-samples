@@ -26,7 +26,7 @@ class TestTouchFile(unittest.TestCase):
     def test_touch_file(cls):
         """Test touch_file"""
         real_file_id = '1KuPmvGq8yoYgbfW74OENMCB5H0n_2Jm9'
-        now = datetime.utcnow().isoformat() + 'Z'
+        now = f'{datetime.utcnow().isoformat()}Z'
         now = re.sub(r'\d{3}Z', 'Z', now)  # Truncate microseconds
         modified_time = touch_file.touch_file(real_file_id=real_file_id,
                                               real_timestamp=now)

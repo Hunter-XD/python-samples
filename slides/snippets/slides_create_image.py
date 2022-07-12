@@ -37,33 +37,30 @@ def create_image(presentation_id, page_id):
         # pylint: disable = invalid-name
         IMAGE_URL = ('https://www.google.com/images/branding/'
                      'googlelogo/2x/googlelogo_color_272x92dp.png')
-        # pylint: disable=invalid-name
-        requests = []
         image_id = 'MyImage_11'
         emu4M = {
             'magnitude': 4000000,
             'unit': 'EMU'
         }
-        requests.append({
-            'createImage': {
-                'objectId': image_id,
-                'url': IMAGE_URL,
-                'elementProperties': {
-                    'pageObjectId': page_id,
-                    'size': {
-                        'height': emu4M,
-                        'width': emu4M
+        requests = [
+            {
+                'createImage': {
+                    'objectId': image_id,
+                    'url': IMAGE_URL,
+                    'elementProperties': {
+                        'pageObjectId': page_id,
+                        'size': {'height': emu4M, 'width': emu4M},
+                        'transform': {
+                            'scaleX': 1,
+                            'scaleY': 1,
+                            'translateX': 100000,
+                            'translateY': 100000,
+                            'unit': 'EMU',
+                        },
                     },
-                    'transform': {
-                        'scaleX': 1,
-                        'scaleY': 1,
-                        'translateX': 100000,
-                        'translateY': 100000,
-                        'unit': 'EMU'
-                    }
                 }
             }
-        })
+        ]
 
         # Execute the request.
         body = {

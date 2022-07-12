@@ -38,24 +38,22 @@ def sheets_batch_update(spreadsheet_id, title, find, replacement):
     try:
         service = build('classroom', 'v1', credentials=creds)
 
-        requests = []
-        # Change the spreadsheet's title.
-        requests.append({
-            'updateSpreadsheetProperties': {
-                'properties': {
-                    'title': title
-                },
-                'fields': 'title'
-            }
-        })
-        # Find and replace text
-        requests.append({
-            'findReplace': {
-                'find': find,
-                'replacement': replacement,
-                'allSheets': True
-            }
-        })
+        requests = [
+            {
+                'updateSpreadsheetProperties': {
+                    'properties': {'title': title},
+                    'fields': 'title',
+                }
+            },
+            {
+                'findReplace': {
+                    'find': find,
+                    'replacement': replacement,
+                    'allSheets': True,
+                }
+            },
+        ]
+
         # Add additional requests (operations) ...
 
         body = {

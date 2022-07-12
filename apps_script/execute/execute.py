@@ -44,28 +44,21 @@ def main():
             # this object are the script's 'errorMessage' and 'errorType', and
             # a list of stack trace elements.
             error = response['error']['details'][0]
-            print(f"Script error message: {0}.{format(error['errorMessage'])}")
+            print(f"Script error message: 0.{format(error['errorMessage'])}")
 
             if 'scriptStackTraceElements' in error:
                 # There may not be a stacktrace if the script didn't start
                 # executing.
                 print("Script error stacktrace:")
                 for trace in error['scriptStackTraceElements']:
-                    print(f"\t{0}: {1}."
-                          f"{format(trace['function'], trace['lineNumber'])}")
-        else:
-            # The structure of the result depends upon what the Apps Script
-            # function returns. Here, the function returns an Apps Script
-            # Object with String keys and values, and so the result is
-            # treated as a Python dictionary (folder_set).
-            folder_set = response['response'].get('result', {})
-            if not folder_set:
-                print('No folders returned!')
-            else:
-                print('Folders under your root folder:')
-                for (folder_id, folder) in folder_set.items():
-                    print(f"\t{0} ({1}).{format(folder, folder_id)}")
+                    print(f"\t0: 1.{format(trace['function'], trace['lineNumber'])}")
+        elif folder_set := response['response'].get('result', {}):
+            print('Folders under your root folder:')
+            for folder_id, folder in folder_set.items():
+                print(f"\t0 (1).{format(folder, folder_id)}")
 
+        else:
+            print('No folders returned!')
     except HttpError as error:
         # The API encountered a problem before the script started executing.
         print(f"An error occurred: {error}")

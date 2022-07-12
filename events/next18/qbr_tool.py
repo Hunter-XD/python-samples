@@ -76,7 +76,7 @@ def create_sheet(template_id):
     presentation_title = pres_reader.GetTitle()
 
     # Create the data manager spreadsheet
-    spreadsheet_title = 'Data Sheet - ' + presentation_title
+    spreadsheet_title = f'Data Sheet - {presentation_title}'
     spreadsheet = spreadsheet_writer.CreateSpreadsheet(
         sheets_service=sheets_service,
         title=spreadsheet_title,
@@ -117,7 +117,7 @@ def add_customers(spreadsheet_id, customer_ids):
     for p in placeholders:
         # Remove any suffix from the property name
         m = re.search(r'{(\w+)(\.\w+)*}', p)
-        properties.append(m.group(1))
+        properties.append(m[1])
 
     data_service = customer_data_service.CustomerDataService()
     writer = spreadsheet_writer.SpreadsheetWriter(
@@ -158,7 +158,7 @@ def create_presentations(spreadsheet_id, customer_ids):
     # Generate a presentation for each customer
     for customer_id in customer_ids:
         # Create a copy of the presentation
-        new_title = customer_id + ' - ' + title
+        new_title = f'{customer_id} - {title}'
         presentation_id = drive_service.files().copy(
             fileId=template_id, body={
                 'name': new_title

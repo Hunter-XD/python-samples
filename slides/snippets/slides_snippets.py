@@ -43,9 +43,8 @@ class SlidesSnippets(object):
         }
         drive_response = drive_service.files().copy(
             fileId=presentation_id, body=body).execute()
-        presentation_copy_id = drive_response.get('id')
         # [END slides_copy_presentation]
-        return presentation_copy_id
+        return drive_response.get('id')
 
     def create_slide(self, presentation_id, page_id):
         slides_service = self.service
@@ -138,32 +137,30 @@ class SlidesSnippets(object):
         # Create a new image, using the supplied object ID,
         # with content downloaded from IMAGE_URL.
         IMAGE_URL = 'https://picsum.photos/200'
-        requests = []
         image_id = 'MyImage_01'
         emu4M = {
             'magnitude': 4000000,
             'unit': 'EMU'
         }
-        requests.append({
-            'createImage': {
-                'objectId': image_id,
-                'url': IMAGE_URL,
-                'elementProperties': {
-                    'pageObjectId': page_id,
-                    'size': {
-                        'height': emu4M,
-                        'width': emu4M
+        requests = [
+            {
+                'createImage': {
+                    'objectId': image_id,
+                    'url': IMAGE_URL,
+                    'elementProperties': {
+                        'pageObjectId': page_id,
+                        'size': {'height': emu4M, 'width': emu4M},
+                        'transform': {
+                            'scaleX': 1,
+                            'scaleY': 1,
+                            'translateX': 100000,
+                            'translateY': 100000,
+                            'unit': 'EMU',
+                        },
                     },
-                    'transform': {
-                        'scaleX': 1,
-                        'scaleY': 1,
-                        'translateX': 100000,
-                        'translateY': 100000,
-                        'unit': 'EMU'
-                    }
                 }
             }
-        })
+        ]
 
         # Execute the request.
         body = {
@@ -198,7 +195,7 @@ class SlidesSnippets(object):
             total_portfolio = row[11]    # total portfolio in column 12
 
             # Duplicate the template presentation using the Drive API.
-            copy_title = customer_name + ' presentation'
+            copy_title = f'{customer_name} presentation'
             body = {
                 'name': copy_title
             }
@@ -248,12 +245,15 @@ class SlidesSnippets(object):
             responses.append(response)
             # [END_EXCLUDE]
             # Count the total number of replacements made.
-            num_replacements = 0
-            for reply in response.get('replies'):
-                num_replacements += reply.get('replaceAllText') \
-                    .get('occurrencesChanged')
-            print('Created presentation for %s with ID: %s' %
-                  (customer_name, presentation_copy_id))
+            num_replacements = sum(
+                reply.get('replaceAllText').get('occurrencesChanged')
+                for reply in response.get('replies')
+            )
+
+            print(
+                f'Created presentation for {customer_name} with ID: {presentation_copy_id}'
+            )
+
             print('Replaced %d text instances' % num_replacements)
 
         # [END slides_text_merging]
@@ -268,34 +268,35 @@ class SlidesSnippets(object):
 
         # [START slides_image_merging]
         # Duplicate the template presentation using the Drive API.
-        copy_title = customer_name + ' presentation'
+        copy_title = f'{customer_name} presentation'
         drive_response = drive_service.files().copy(
             fileId=template_presentation_id,
             body={'name': copy_title}).execute()
         presentation_copy_id = drive_response.get('id')
 
         # Create the image merge (replaceAllShapesWithImage) requests.
-        requests = []
-        requests.append({
-            'replaceAllShapesWithImage': {
-                'imageUrl': logo_url,
-                'replaceMethod': 'CENTER_INSIDE',
-                'containsText': {
-                    'text': '{{company-logo}}',
-                    'matchCase': True
+        requests = [
+            {
+                'replaceAllShapesWithImage': {
+                    'imageUrl': logo_url,
+                    'replaceMethod': 'CENTER_INSIDE',
+                    'containsText': {
+                        'text': '{{company-logo}}',
+                        'matchCase': True,
+                    },
                 }
-            }
-        })
-        requests.append({
-            'replaceAllShapesWithImage': {
-                'imageUrl': customer_graphic_url,
-                'replaceMethod': 'CENTER_INSIDE',
-                'containsText': {
-                    'text': '{{customer-graphic}}',
-                    'matchCase': True
+            },
+            {
+                'replaceAllShapesWithImage': {
+                    'imageUrl': customer_graphic_url,
+                    'replaceMethod': 'CENTER_INSIDE',
+                    'containsText': {
+                        'text': '{{customer-graphic}}',
+                        'matchCase': True,
+                    },
                 }
-            }
-        })
+            },
+        ]
 
         # Execute the requests.
         body = {
@@ -305,10 +306,11 @@ class SlidesSnippets(object):
             presentationId=presentation_copy_id, body=body).execute()
 
         # Count the number of replacements made.
-        num_replacements = 0
-        for reply in response.get('replies'):
-            num_replacements += reply.get('replaceAllShapesWithImage') \
-                .get('occurrencesChanged')
+        num_replacements = sum(
+            reply.get('replaceAllShapesWithImage').get('occurrencesChanged')
+            for reply in response.get('replies')
+        )
+
         print('Created merged presentation with ID: {0}'
               .format(presentation_copy_id))
         print('Replaced %d shapes with images.' % num_replacements)
@@ -319,22 +321,16 @@ class SlidesSnippets(object):
         slides_service = self.service
         # [START slides_simple_text_replace]
         # Remove existing text in the shape, then insert new text.
-        requests = []
-        requests.append({
-            'deleteText': {
-                'objectId': shape_id,
-                'textRange': {
-                    'type': 'ALL'
+        requests = [
+            {'deleteText': {'objectId': shape_id, 'textRange': {'type': 'ALL'}}},
+            {
+                'insertText': {
+                    'objectId': shape_id,
+                    'insertionIndex': 0,
+                    'text': replacement_text,
                 }
-            }
-        })
-        requests.append({
-            'insertText': {
-                'objectId': shape_id,
-                'insertionIndex': 0,
-                'text': replacement_text
-            }
-        })
+            },
+        ]
 
         # Execute the requests.
         body = {

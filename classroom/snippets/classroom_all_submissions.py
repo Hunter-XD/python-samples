@@ -55,9 +55,10 @@ def classroom_all_submissions(course_id, user_id):
         else:
             print('Complete list of student Submissions:')
             for submission in submissions:
-                print("%s was submitted at %s" %
-                      (submission.get('id'),
-                       submission.get('creationTime')))
+                print(
+                    f"{submission.get('id')} was submitted at {submission.get('creationTime')}"
+                )
+
 
     except HttpError as error:
         print(f"An error occurred: {error}")

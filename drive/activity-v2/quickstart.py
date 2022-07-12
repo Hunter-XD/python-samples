@@ -57,11 +57,7 @@ def main():
         results = service.activity().query(body={
             'pageSize': 10
         }).execute()
-        activities = results.get('activities', [])
-
-        if not activities:
-            print('No activity.')
-        else:
+        if activities := results.get('activities', []):
             print('Recent activity:')
             for activity in activities:
                 time = getTimeInfo(activity)
@@ -75,6 +71,8 @@ def main():
                 # Print the action occurred on drive with actor, target item and timestamp
                 print(u'{0}: {1}, {2}, {3}'.format(time, action, actor_name, target_name))
 
+        else:
+            print('No activity.')
     except HttpError as error:
         # TODO(developer) - Handleerrors from drive activity API.
         print(f'An error occurred: {error}')
@@ -112,9 +110,7 @@ def getUserInfo(user):
 
 # Returns actor information, or the type of actor if not a user.
 def getActorInfo(actor):
-    if 'user' in actor:
-        return getUserInfo(actor['user'])
-    return getOneOf(actor)
+    return getUserInfo(actor['user']) if 'user' in actor else getOneOf(actor)
 
 
 # Returns the type of a target and an associated title.

@@ -54,15 +54,14 @@ def main():
     print('Getting the first 10 users in the domain')
     results = service.users().list(customer='my_customer', maxResults=10,
                                    orderBy='email').execute()
-    users = results.get('users', [])
-
-    if not users:
-        print('No users in the domain.')
-    else:
+    if users := results.get('users', []):
         print('Users:')
         for user in users:
             print(u'{0} ({1})'.format(user['primaryEmail'],
                                       user['name']['fullName']))
+
+    else:
+        print('No users in the domain.')
 
 
 if __name__ == '__main__':
